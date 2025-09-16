@@ -1,0 +1,40 @@
+step "deploy-with-kustomize" {
+    name = "Deploy with Kustomizeasdf"
+    properties = {
+        Octopus.Action.TargetRoles = "platform-k8s"
+    }
+
+    action {
+        action_type = "Octopus.Kubernetes.Kustomize"
+        properties = {
+            Octopus.Action.GitRepository.Source = "External"
+            Octopus.Action.Kubernetes.DeploymentTimeout = "180"
+            Octopus.Action.Kubernetes.Kustomize.OverlayPath = "overlays/#{Octopus.Environment.Name}"
+            Octopus.Action.Kubernetes.ResourceStatusCheck = "True"
+            Octopus.Action.Kubernetes.ServerSideApply.Enabled = "True"
+            Octopus.Action.Kubernetes.ServerSideApply.ForceConflicts = "True"
+            Octopus.Action.Script.ScriptSource = "GitRepository"
+            Octopus.Action.SubstituteInFiles.TargetFiles = "**/*.env"
+        }
+        worker_pool = "hosted-windows"
+        worker_pool_variable = ""
+
+        git_dependencies {
+            default_branch = "main"
+            git_credential_id = "GitCredentials-161"
+            git_credential_type = "Library"
+            repository_uri = "https://github.com/robpearson/newservice.git"
+        }
+
+        packages "asdf" {
+            acquisition_location = "NotAcquired"
+            feed = "dockerhub"
+            package_id = "asdf/asdf"
+            properties = {
+                Extract = "False"
+                Purpose = "DockerImageReference"
+                SelectionMode = "immediate"
+            }
+        }
+    }
+}
