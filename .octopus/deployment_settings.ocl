@@ -5,6 +5,6 @@ connectivity_policy {
 versioning_strategy {
     donor_package {
         package = "asdf"
-        step = "deploy-with-kustomize"
+        step = "Deploy Container"
     }
 }
